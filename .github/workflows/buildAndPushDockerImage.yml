@@ -18,7 +18,7 @@ jobs:
       - name: Build BE and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: ../
+          context: DockerFileFolder/
           push: true
           tags: ydalabss/be-chat-apps-v001:latest
     
