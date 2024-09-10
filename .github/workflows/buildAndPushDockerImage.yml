@@ -18,13 +18,13 @@ jobs:
       - name: Build BE and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: chat_app/
+          context: ../
           push: true
           tags: ydalabss/be-chat-apps-v001:latest
     
       - name: Build FE and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: chat_app/client/
+          context: client/
           push: true
           tags: ydalabss/fe-chat-apps-v001:latest
