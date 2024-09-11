@@ -8,7 +8,7 @@ function App() {
 
   useEffect(() => {
     // Initialize WebSocket connection
-    const ws = new WebSocket("ws://103.217.145.32:3000/cable");
+    const ws = new WebSocket("ws://103.217.145.32:1234/cable");
     wsRef.current = ws; // Store WebSocket reference
 
     const newGuid = Math.random().toString(36).substring(2, 15); // Generate GUID
@@ -44,7 +44,7 @@ function App() {
     const body = e.target.message.value;
     e.target.message.value = "";
 
-    await fetch("http://103.217.145.32:3000/messages", {
+    await fetch("http://103.217.145.32:1234/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
