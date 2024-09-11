@@ -1,46 +1,40 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
+
+const ws = new WebSocket("ws://103.217.145.32:3000/cable");
 
 function App() {
   const [messages, setMessages] = useState([]);
   const [guid, setGuid] = useState("");
-  const messagesContainerRef = useRef(null);
-  const wsRef = useRef(null);
+  const messagesContainer = document.getElementById("messages");
+
+  ws.onopen = () => {
+    console.log("Connected to websocket server");
+    setGuid(Math.random().toString(36).substring(2, 15));
+
+    ws.send(
+      JSON.stringify({
+        command: "subscribe",
+        identifier: JSON.stringify({
+          id: guid,
+          channel: "MessagesChannel",
+        }),
+      })
+    );
+  };
+
+  ws.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    if (data.type === "ping") return;
+    if (data.type === "welcome") return;
+    if (data.type === "confirm_subscription") return;
+
+    const message = data.message;
+    setMessagesAndScrollDown([...messages, message]);
+  };
 
   useEffect(() => {
-    // Initialize WebSocket connection
-    wsRef.current = new WebSocket("ws://103.217.145.32:3000/cable");
-
-    wsRef.current.onopen = () => {
-      console.log("Connected to websocket server");
-      const newGuid = Math.random().toString(36).substring(2, 15);
-      setGuid(newGuid);
-
-      wsRef.current.send(
-        JSON.stringify({
-          command: "subscribe",
-          identifier: JSON.stringify({
-            id: newGuid,
-            channel: "MessagesChannel",
-          }),
-        })
-      );
-    };
-
-    wsRef.current.onmessage = (e) => {
-      const data = JSON.parse(e.data);
-      if (data.type === "ping" || data.type === "welcome" || data.type === "confirm_subscription") {
-        return;
-      }
-
-      const message = data.message;
-      setMessages((prevMessages) => [...prevMessages, message]);
-    };
-
-    // Cleanup WebSocket connection on component unmount
-    return () => {
-      wsRef.current.close();
-    };
+    fetchMessages();
   }, []);
 
   useEffect(() => {
@@ -64,13 +58,17 @@ function App() {
   const fetchMessages = async () => {
     const response = await fetch("http://103.217.145.32:3000/messages");
     const data = await response.json();
+    setMessagesAndScrollDown(data);
+  };
+
+  const setMessagesAndScrollDown = (data) => {
     setMessages(data);
+    resetScroll();
   };
 
   const resetScroll = () => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-    }
+    if (!messagesContainer) return;
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
   };
 
   return (
@@ -79,7 +77,7 @@ function App() {
         <h1>Messages</h1>
         <p>Guid: {guid}</p>
       </div>
-      <div className="messages" ref={messagesContainerRef}>
+      <div className="messages" id="messages">
         {messages.map((message) => (
           <div className="message" key={message.id}>
             <p>{message.body}</p>
