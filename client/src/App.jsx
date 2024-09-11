@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 
-const ws = new WebSocket("ws://103.217.145.32:3000/cable");
+const ws = new WebSocket("ws://103.217.145.32:1234/cable");
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -10,9 +10,7 @@ function App() {
 
   ws.onopen = () => {
     console.log("Connected to websocket server");
-    const newGuid = Math.random().toString(36).substring(2, 15); // Generate GUID
-    setGuid(newGuid);
-    //setGuid(Math.random().toString(36).substring(2, 15));
+    setGuid(Math.random().toString(36).substring(2, 15));
 
     ws.send(
       JSON.stringify({
@@ -48,7 +46,7 @@ function App() {
     const body = e.target.message.value;
     e.target.message.value = "";
 
-    await fetch("http://103.217.145.32:3000/messages", {
+    await fetch("http://103.217.145.32:1234/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +56,7 @@ function App() {
   };
 
   const fetchMessages = async () => {
-    const response = await fetch("http://103.217.145.32:3000/messages");
+    const response = await fetch("http://103.217.145.32:1234/messages");
     const data = await response.json();
     setMessagesAndScrollDown(data);
   };
