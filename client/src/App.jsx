@@ -1,43 +1,45 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
+
+const ws = new WebSocket("ws://103.217.145.32:1234/cable");
 
 function App() {
   const [messages, setMessages] = useState([]);
   const [guid, setGuid] = useState("");
-  const wsRef = useRef(null); // To keep a reference to the WebSocket
+  const messagesContainer = document.getElementById("messages");
 
-  useEffect(() => {
-    // Initialize WebSocket connection
-    const ws = new WebSocket("ws://103.217.145.32:1234/cable");
-    wsRef.current = ws; // Store WebSocket reference
+  ws.onopen = () => {
+    console.log("Connected to websocket server");
+    setGuid(Math.random().toString(36).substring(2, 15));
 
-    const newGuid = Math.random().toString(36).substring(2, 15); // Generate GUID
-    setGuid(newGuid);
-
-    ws.onopen = () => {
-      console.log("Connected to WebSocket server");
-      ws.send(JSON.stringify({
+    ws.send(
+      JSON.stringify({
         command: "subscribe",
         identifier: JSON.stringify({
-          id: newGuid,
+          id: guid,
           channel: "MessagesChannel",
         }),
-      }));
-    };
+      })
+    );
+  };
 
-    ws.onmessage = (e) => {
-      const data = JSON.parse(e.data);
-      if (data.type !== "ping" && data.type !== "welcome" && data.type !== "confirm_subscription") {
-        const message = data.message;
-        setMessages((prevMessages) => [...prevMessages, message]);
-      }
-    };
+  ws.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    if (data.type === "ping") return;
+    if (data.type === "welcome") return;
+    if (data.type === "confirm_subscription") return;
 
-    return () => {
-      // Cleanup on component unmount
-      ws.close();
-    };
-  }, []); // Empty dependency array means this effect runs once on mount
+    const message = data.message;
+    setMessagesAndScrollDown([...messages, message]);
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  useEffect(() => {
+    resetScroll();
+  }, [messages]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,10 +55,26 @@ function App() {
     });
   };
 
+  const fetchMessages = async () => {
+    const response = await fetch("http://103.217.145.32:1234/messages");
+    const data = await response.json();
+    setMessagesAndScrollDown(data);
+  };
+
+  const setMessagesAndScrollDown = (data) => {
+    setMessages(data);
+    resetScroll();
+  };
+
+  const resetScroll = () => {
+    if (!messagesContainer) return;
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  };
+
   return (
     <div className="App">
       <div className="messageHeader">
-        <h1>Messages</h1>
+        <h1>Live Chat</h1>
         <p>Guid: {guid}</p>
       </div>
       <div className="messages" id="messages">
