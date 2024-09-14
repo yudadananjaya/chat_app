@@ -74,13 +74,16 @@ function App() {
   return (
     <div className="App">
       <div className="messageHeader">
-        <h1>Live Chat</h1>
+        <h1>myChatApp</h1>
         <p>Guid: {guid}</p>
       </div>
       <div className="messages" id="messages">
         {messages.map((message) => (
           <div className="message" key={message.id}>
             <p>{message.body}</p>
+            <div className="timestamp">
+              {new Date(message.created_at).toLocaleTimeString()}
+            </div>
           </div>
         ))}
       </div>

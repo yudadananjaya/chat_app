@@ -1,57 +1,87 @@
+/* App.css */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #e1e1e1; /* Light text color for dark mode */
+  background-color: #2f2f2f; /* Dark background color */
+}
+
 .App {
-  height: 100vh;
-  width: 100%;
-}
-
-#root {
-  height: 100vh;
-  width: 100%;
-}
-
-.messages {
-  height: 60%;
-  overflow-y: scroll;
-  padding: 0 20px;
-
-  margin: 10% auto 0 auto;
-  width: 80%
-}
-
-.messageForm {
   display: flex;
-  justify-content: center; /* Center horizontally */
-}
-
-.messageForm form {
-  display: grid;
-  grid-template-columns: 1fr auto; /* Two columns: input takes available space, button fits content */
-  gap: 10px; /* Space between input and button */
-  max-width: 600px; /* Optional: limit the maximum width of the form */
-  width: 100%; /* Optional: make the form take up the full width of the container */
-}
-
-.messageInput {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.messageButton {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-}
-
-.messageButton:hover {
-  background-color: #0056b3;
+  flex-direction: column;
+  height: 100vh; /* Full viewport height */
+  width: 100vw;  /* Full viewport width */
 }
 
 .messageHeader {
-  height: 10%;
-  width: 100%;
+  padding: 15px;
+  background-color: #0088cc; /* Telegram blue for header */
+  color: #ffffff; /* White text color for header */
   text-align: center;
+  border-bottom: 1px solid #007ab8; /* Darker blue border for separation */
+}
+
+.messages {
+  flex: 1; /* Take up remaining space */
+  overflow-y: auto; /* Enable scrolling if messages overflow */
+  padding: 15px;
+  background-color: #1c1c1c; /* Dark background for message area */
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  margin-bottom: 10px;
   padding: 10px;
+  border-radius: 15px;
+  background-color: #333; /* Slightly lighter gray for messages */
+  max-width: 80%;
+  align-self: flex-start; /* Aligns the message bubbles to the left */
+}
+
+.message p {
+  margin: 0;
+  color: #e1e1e1; /* Light gray text color */
+}
+
+.timestamp {
+  font-size: 0.75em;
+  color: #888; /* Lighter gray for timestamp */
+  margin-top: 5px;
+}
+
+.messageForm {
+  padding: 10px;
+  background-color: #1c1c1c; /* Dark background for input area */
+  border-top: 1px solid #333; /* Darker border */
+  display: flex;
+  align-items: center;
+}
+
+.messageForm form {
+  display: flex;
+  width: 100%; /* Ensure the form takes up the full width */
+  margin: 0;
+}
+
+.messageInput {
+  flex: 1; /* Take up all available space */
+  padding: 10px;
+  border: 1px solid #444; /* Dark gray border */
+  border-radius: 5px;
+  background-color: #2e2e2e; /* Slightly darker background for input */
+  color: #e1e1e1; /* Light text color for input */
+  margin-right: 10px; /* Space between input and button */
+}
+
+.messageButton {
+  padding: 10px 15px; /* Padding for button */
+  border: none;
+  background-color: #4a90e2; /* Blue button color */
+  color: #ffffff; /* White text color */
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
 }
